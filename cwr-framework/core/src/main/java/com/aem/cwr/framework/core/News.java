@@ -13,60 +13,53 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class News extends WCMUsePojo{
+public class News extends WCMUsePojo {
 	Logger logger = LoggerFactory.getLogger(News.class);
 
-	List<NewsProperties> entries= new ArrayList<NewsProperties>();
-	
+	List<NewsProperties> entries = new ArrayList<NewsProperties>();
+
 	@Override
 	public void activate() throws Exception {
 
-		
-		
 		try {
-			String[] content= getProperties().get("autocontentMap", String[].class);
-			logger.debug("Inside News"+ content.length);
-			for (String props: content) {
-				NewsProperties newsProperties= new NewsProperties();
-				JSONObject object= new JSONObject(props);
-				String finalProp= object.getString("autonews");
+			String[] content = getProperties().get("autocontentMap", String[].class);
+			logger.debug("Inside News" + content.length);
+			for (String props : content) {
+				NewsProperties newsProperties = new NewsProperties();
+				JSONObject object = new JSONObject(props);
+				String finalProp = object.getString("autonews");
 				logger.debug("Path" + finalProp);
-				
+
 				newsProperties.setNewsPath(finalProp);
 				logger.debug("array element" + newsProperties.newsPath);
 
-
-
-
-				Resource res = getResourceResolver().getResource(finalProp+Constants.JCR);
+				Resource res = getResourceResolver().getResource(finalProp + Constants.JCR);
 				logger.debug("resource" + res.getName());
 
-				if(res.adaptTo(ValueMap.class).containsKey(Constants.TITLE)) {
-					String dTitle = res.adaptTo(ValueMap.class).get(Constants.TITLE,"");
+				if (res.adaptTo(ValueMap.class).containsKey(Constants.TITLE)) {
+					String dTitle = res.adaptTo(ValueMap.class).get(Constants.TITLE, "");
 					logger.debug("title " + dTitle);
 					newsProperties.setTitle(dTitle);
-					
 				}
 
-				if(res.adaptTo(ValueMap.class).containsKey(Constants.DESCRIPTION)) {
-					String dDescription = res.adaptTo(ValueMap.class).get(Constants.DESCRIPTION,"");
+				if (res.adaptTo(ValueMap.class).containsKey(Constants.DESCRIPTION)) {
+					String dDescription = res.adaptTo(ValueMap.class).get(Constants.DESCRIPTION, "");
 					logger.debug("desc " + dDescription);
 					newsProperties.setDescription(dDescription);
 				}
-				
-				Resource resImage = getResourceResolver().getResource(finalProp+Constants.IMAGE);
-				if(resImage.adaptTo(ValueMap.class).containsKey(Constants.IMAGEPATH)) {
-					String dImagePath = resImage.adaptTo(ValueMap.class).get(Constants.IMAGEPATH,"");
+
+				Resource resImage = getResourceResolver().getResource(finalProp + Constants.IMAGE);
+				if (resImage.adaptTo(ValueMap.class).containsKey(Constants.IMAGEPATH)) {
+					String dImagePath = resImage.adaptTo(ValueMap.class).get(Constants.IMAGEPATH, "");
 					logger.debug("image " + dImagePath);
 					newsProperties.setImagePath(dImagePath);
 				}
-				
+
 				entries.add(newsProperties);
 			}
 		} catch (Exception e) {
-			logger.error("Error occured"+ e);
+			logger.error("Error occured" + e);
 		}
-	
 
 	}
 
@@ -74,7 +67,4 @@ public class News extends WCMUsePojo{
 		return entries;
 	}
 
-	
-
 }
-
